@@ -24,7 +24,31 @@ class Task with ChangeNotifier {
 }
 
 class TaskTodo with ChangeNotifier {
-  List<Task> _tasks = [];
+  List<Task> _tasks = [
+    Task(
+        id: '!1',
+        title: 'Reading book',
+        description: '',
+        category: 'T2',
+        date: DateTime.now(),
+        isUrgent: true),
+    Task(
+        id: '!2',
+        title: 'Coding the app',
+        description:
+            'Completing the todo list app with the flutter to post to playstore',
+        category: 'T2',
+        date: DateTime.now(),
+        isUrgent: true),
+    Task(
+        id: '!3',
+        title: 'Merging to the github',
+        description:
+            'Checking the code of the fellow interns and the merging them to the main branch fnuvnlaawnefvshdfhawe',
+        category: 'T1',
+        date: DateTime.now(),
+        isUrgent: true)
+  ];
 
   List<Task> get tasks {
     return [..._tasks];
@@ -32,6 +56,10 @@ class TaskTodo with ChangeNotifier {
 
   List<Task> getByCategory(String type) {
     return _tasks.where((item) => item.category == type).toList();
+  }
+
+  List<Task> urgents() {
+    return _tasks.where((item) => item.isUrgent == true).toList();
   }
 
   Task findById(String id) {

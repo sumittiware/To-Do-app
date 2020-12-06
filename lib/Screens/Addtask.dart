@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:to_do/Models/task.dart';
@@ -14,11 +15,11 @@ class AddTask extends StatefulWidget {
 }
 
 class _AddTaskState extends State<AddTask> {
-  String _title;
-  String _description;
+  String _title = '';
+  String _description = '';
   DateTime _date;
   bool _isUrgent = false;
-  String _type;
+  String _type = '';
   final _form = GlobalKey<FormState>();
 
   void _chooseDate() {
@@ -43,11 +44,17 @@ class _AddTaskState extends State<AddTask> {
 
   void _submit() {
     FocusScope.of(context).unfocus();
+    final _isValid = _form.currentState.validate();
 
-    if (_title.isEmpty ||
-        _description.isEmpty ||
-        _type.isEmpty ||
-        _date == null) {
+    if (!_isValid || _type == null || _date == null) {
+      Fluttertoast.showToast(
+          msg: 'Please fill the respective fields',
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 4,
+          backgroundColor: Colors.grey.shade300,
+          textColor: Colors.black,
+          fontSize: 16.0);
       return;
     }
     final newTask = Task(
@@ -60,6 +67,15 @@ class _AddTaskState extends State<AddTask> {
     //add to tasks
     try {
       Provider.of<TaskTodo>(context, listen: false).addTask(newTask);
+      Navigator.of(context).pop();
+      Fluttertoast.showToast(
+          msg: 'Task added',
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 4,
+          backgroundColor: Colors.grey.shade300,
+          textColor: Colors.black,
+          fontSize: 16.0);
     } catch (e) {
       print(e);
     }
@@ -117,10 +133,10 @@ class _AddTaskState extends State<AddTask> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      height: height * 0.05,
+                      height: height * 0.03,
                     ),
                     TextFormField(
-                      maxLength: 15,
+                      maxLength: 20,
                       maxLines: 1,
                       decoration: InputDecoration(
                         labelText: 'Title',
@@ -138,6 +154,7 @@ class _AddTaskState extends State<AddTask> {
                       },
                     ),
                     TextFormField(
+                      maxLength: 50,
                       maxLines: 2,
                       decoration: InputDecoration(
                         labelText: 'Description',
@@ -154,35 +171,45 @@ class _AddTaskState extends State<AddTask> {
                         return null;
                       },
                     ),
-                    Container(
-                      padding: EdgeInsets.all(10),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: Text(_date == null
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Expanded(
+                          child: Text(
+                            _date == null
                                 ? 'No. Date chossen'
-                                : 'Picked Date : ${DateFormat.yMd().format(_date)}'),
+                                : 'Picked Date : ${DateFormat.yMd().format(_date)}',
+                            style: TextStyle(fontSize: 16),
                           ),
-                          FlatButton(
-                            child: Text(
-                              'Choose Date',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).primaryColor),
-                            ),
-                            onPressed: _chooseDate,
+                        ),
+                        FlatButton(
+                          child: Text(
+                            'Choose Date',
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).primaryColor),
                           ),
-                        ],
-                      ),
+                          onPressed: _chooseDate,
+                        ),
+                      ],
                     ),
-                    SwitchListTile(
-                      value: _isUrgent,
-                      onChanged: (value) {
-                        setState(() {
-                          _isUrgent = value;
-                        });
-                      },
-                      title: Text('Is the this task very urgent/important?'),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Is the this task very urgent/important?',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        Switch(
+                          value: _isUrgent,
+                          onChanged: (value) {
+                            setState(() {
+                              _isUrgent = value;
+                            });
+                          },
+                        )
+                      ],
                     ),
                     SelectType(_selectType),
                     Align(

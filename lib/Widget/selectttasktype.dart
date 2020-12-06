@@ -20,7 +20,7 @@ class _SelectTypeState extends State<SelectType> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Select task category',
+            'Select task category : ',
             style: TextStyle(fontSize: 16),
             textAlign: TextAlign.end,
           ),

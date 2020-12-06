@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:to_do/Models/task.dart';
 import 'package:to_do/Screens/Addtask.dart';
 import 'package:to_do/Screens/taskpage.dart';
+import 'package:to_do/Screens/urgenttask.dart';
 import './Screens/Homepage.dart';
 
 void main() => runApp(Tasks());
@@ -23,7 +24,8 @@ class Tasks extends StatelessWidget {
         routes: {
           Homepage.routename: (ctx) => Homepage(),
           TaskPage.routename: (ctx) => TaskPage(),
-          AddTask.routename: (ctx) => AddTask()
+          AddTask.routename: (ctx) => AddTask(),
+          UrgentTasksPage.routename: (ctx) => UrgentTasksPage()
         },
       ),
     );

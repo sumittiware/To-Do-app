@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:to_do/Screens/Addtask.dart';
 import 'package:to_do/Widget/TaskTypewidget.dart';
+import 'package:to_do/Widget/drawer.dart';
 import '../Models/Tasktype.dart' as t;
 
 class Homepage extends StatefulWidget {
@@ -11,6 +12,12 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
   bool _drawerOpen = false;
+  void _setDrawer() {
+    setState(() {
+      _drawerOpen = !_drawerOpen;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
@@ -102,23 +109,7 @@ class _HomepageState extends State<Homepage> {
             bottom: 5,
             right: 0,
           ),
-          if (_drawerOpen)
-            Container(
-              height: height,
-              width: width * 0.8,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                      bottomRight: Radius.circular(width * 0.4),
-                      topRight: Radius.circular(width * 0.4)),
-                  color: Color(0xFFA090F0)),
-              child: IconButton(
-                  icon: Icon(Icons.close),
-                  onPressed: () {
-                    setState(() {
-                      _drawerOpen = false;
-                    });
-                  }),
-            )
+          if (_drawerOpen) MyDrawer(_setDrawer)
         ],
       ),
     );

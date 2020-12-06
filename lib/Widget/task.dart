@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:circular_check_box/circular_check_box.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:to_do/Models/task.dart';
 
@@ -35,20 +38,27 @@ class _TaskWidgetState extends State<TaskWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 CircularCheckBox(
-                    activeColor: Colors.green.shade200,
+                    activeColor: Theme.of(context).primaryColor,
                     value: task.isDone,
                     onChanged: (value) {
                       setState(() {
                         task.toggleDone();
                       });
                     }),
-                Text(
-                  task.title,
-                  style: TextStyle(
-                      fontSize: 20,
-                      decoration: (task.isDone)
-                          ? TextDecoration.lineThrough
-                          : TextDecoration.none),
+                Container(
+                  width: width * 0.5,
+                  child: FittedBox(
+                    fit: BoxFit.contain,
+                    child: Text(
+                      task.title,
+                      style: TextStyle(
+                          fontSize: 20,
+                          color: (task.isDone) ? Colors.red : Colors.white,
+                          decoration: (task.isDone)
+                              ? TextDecoration.lineThrough
+                              : TextDecoration.none),
+                    ),
+                  ),
                 ),
                 IconButton(
                     icon: Icon(
@@ -62,21 +72,27 @@ class _TaskWidgetState extends State<TaskWidget> {
             ),
             if (_expanded)
               Container(
-                height: 100,
+                height: min(
+                    double.parse(task.description.length.toString()) * 1 + 40,
+                    200),
                 width: double.infinity,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Date : ${task.date}',
-                      style: TextStyle(fontSize: 15),
+                      'Date : ${DateFormat.yMd().format(task.date)}',
+                      style: TextStyle(fontSize: 18, color: Colors.white),
                     ),
                     Text(
                       'Description : ',
-                      style: TextStyle(fontSize: 15),
+                      style: TextStyle(fontSize: 18, color: Colors.white),
                     ),
-                    Text(task.description)
+                    if (task.description.length != 0)
+                      Text(
+                        task.description,
+                        style: TextStyle(color: Colors.white, fontSize: 17),
+                      )
                   ],
                 ),
               )
