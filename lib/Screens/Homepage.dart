@@ -55,52 +55,52 @@ class _HomepageState extends State<Homepage> {
                         ),
                       ],
                     )),
-                SizedBox(
-                  height: height * 0.05,
-                ),
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 20),
-                  height: height * 0.65,
+                  height: height * 0.8,
                   child: GridView.builder(
                     gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                         maxCrossAxisExtent: width * 0.5,
                         mainAxisSpacing: 10,
                         childAspectRatio: 1 / 1.2,
                         crossAxisSpacing: 20),
-                    itemBuilder: (ctx, index) => TasType(t.type[index].title,
-                        t.type[index].imagepath, t.type[index].color),
+                    itemBuilder: (ctx, index) => TasType(
+                        t.type[index].id,
+                        t.type[index].title,
+                        t.type[index].imagepath,
+                        t.type[index].color),
                     itemCount: t.type.length,
                   ),
                 ),
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: SizedBox(
-                    width: width * 0.5,
-                    height:
-                        height * 0.1 + MediaQuery.of(context).padding.bottom,
-                    child: RaisedButton.icon(
-                      onPressed: () {
-                        Navigator.of(context).pushNamed(AddTask.routename);
-                      },
-                      icon: Icon(
-                        Icons.add,
-                        size: 30,
-                        color: Colors.white,
-                      ),
-                      label: Text(
-                        'Add Task',
-                        style: TextStyle(fontSize: 20, color: Colors.white),
-                      ),
-                      color: Color(0xFF584890),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(30),
-                              bottomLeft: Radius.circular(30))),
-                    ),
-                  ),
-                )
               ],
             ),
+          ),
+          Positioned(
+            child: SizedBox(
+              width: width * 0.5,
+              height: height * 0.1 + MediaQuery.of(context).padding.bottom,
+              child: RaisedButton.icon(
+                onPressed: () {
+                  Navigator.of(context).pushNamed(AddTask.routename);
+                },
+                icon: Icon(
+                  Icons.add,
+                  size: 30,
+                  color: Colors.white,
+                ),
+                label: Text(
+                  'Add Task',
+                  style: TextStyle(fontSize: 20, color: Colors.white),
+                ),
+                color: Color(0xFF584890),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        bottomLeft: Radius.circular(30))),
+              ),
+            ),
+            bottom: 5,
+            right: 0,
           ),
           if (_drawerOpen)
             Container(

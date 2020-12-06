@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:to_do/Screens/taskpage.dart';
 
 class TasType extends StatefulWidget {
+  final String id;
   final String title;
   final String imagepath;
   final Color color;
-  TasType(this.title, this.imagepath, this.color);
+  TasType(this.id, this.title, this.imagepath, this.color);
   @override
   _TasTypeState createState() => _TasTypeState();
 }
@@ -16,7 +17,8 @@ class _TasTypeState extends State<TasType> {
     final height = MediaQuery.of(context).size.height;
     return InkWell(
       onTap: () {
-        Navigator.of(context).pushNamed(TaskPage.routename);
+        Navigator.of(context)
+            .pushNamed(TaskPage.routename, arguments: widget.id);
       },
       child: Container(
         height: height * 0.4,

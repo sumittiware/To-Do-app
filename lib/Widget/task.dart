@@ -1,7 +1,11 @@
 import 'package:circular_check_box/circular_check_box.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:to_do/Models/task.dart';
 
 class TaskWidget extends StatefulWidget {
+  final String id;
+  TaskWidget(this.id);
   @override
   _TaskWidgetState createState() => _TaskWidgetState();
 }
@@ -13,6 +17,7 @@ class _TaskWidgetState extends State<TaskWidget> {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
+    final task = Provider.of<TaskTodo>(context).findById(widget.id);
     return Padding(
       padding: const EdgeInsets.fromLTRB(50, 5, 5, 5),
       child: Container(
@@ -31,17 +36,17 @@ class _TaskWidgetState extends State<TaskWidget> {
               children: [
                 CircularCheckBox(
                     activeColor: Colors.green.shade200,
-                    value: _value,
+                    value: task.isDone,
                     onChanged: (value) {
                       setState(() {
-                        _value = value;
+                        task.toggleDone();
                       });
                     }),
                 Text(
-                  'Taskname',
+                  task.title,
                   style: TextStyle(
                       fontSize: 20,
-                      decoration: (_value)
+                      decoration: (task.isDone)
                           ? TextDecoration.lineThrough
                           : TextDecoration.none),
                 ),
@@ -64,15 +69,14 @@ class _TaskWidgetState extends State<TaskWidget> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Date : DD/MM/YYYY',
+                      'Date : ${task.date}',
                       style: TextStyle(fontSize: 15),
                     ),
                     Text(
                       'Description : ',
                       style: TextStyle(fontSize: 15),
                     ),
-                    Text(
-                        'uvnu8apewuaip8ewasdifawnu8ta0ewvit7y4nq8pvarnuisnvsggigtjvgsgfopshotsnuedk')
+                    Text(task.description)
                   ],
                 ),
               )

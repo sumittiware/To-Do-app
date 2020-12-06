@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:to_do/Models/task.dart';
+import 'package:to_do/Widget/TaskTypewidget.dart';
+import 'package:to_do/Widget/notask.dart';
+import 'package:to_do/main.dart';
 import '../Widget/task.dart';
+import '../Models/Tasktype.dart' as types;
 
 class TaskPage extends StatelessWidget {
   static const routename = 'taskpage';
   @override
   Widget build(BuildContext context) {
+    final typeId = ModalRoute.of(context).settings.arguments as String;
+    final type = types.findById(typeId);
+    final items = Provider.of<TaskTodo>(context).getByCategory(typeId);
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -34,7 +43,7 @@ class TaskPage extends StatelessWidget {
                         width: 20,
                       ),
                       Text(
-                        'Category Name',
+                        type.title,
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -44,10 +53,13 @@ class TaskPage extends StatelessWidget {
                   )),
               Container(
                 height: height * 0.8,
-                child: ListView.builder(
-                  itemBuilder: (ctx, index) => TaskWidget(),
-                  itemCount: 10,
-                ),
+                child: (items.length == 0)
+                    ? NoTask()
+                    : ListView.builder(
+                        itemBuilder: (ctx, index) =>
+                            TaskWidget(items[index].id),
+                        itemCount: items.length,
+                      ),
               )
             ])));
   }
