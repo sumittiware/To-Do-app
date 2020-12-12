@@ -6,7 +6,10 @@ class NoTask extends StatelessWidget {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return Center(
-      child: Text('No Tasks added!!!'),
+      child: Text(
+        'No Tasks added!!!',
+        style: TextStyle(fontSize: 20),
+      ),
     );
   }
 }

@@ -18,6 +18,8 @@ class _AddTaskState extends State<AddTask> {
   String _title = '';
   String _description = '';
   DateTime _date;
+  TimeOfDay _time;
+  String _showtime;
   bool _isUrgent = false;
   String _type = '';
   final _form = GlobalKey<FormState>();
@@ -26,7 +28,7 @@ class _AddTaskState extends State<AddTask> {
     showDatePicker(
             context: context,
             initialDate: DateTime.now(),
-            firstDate: DateTime(2020),
+            firstDate: DateTime.now(),
             lastDate: DateTime(2021))
         .then((_pickeddate) {
       if (_pickeddate == null) {
@@ -34,6 +36,24 @@ class _AddTaskState extends State<AddTask> {
       }
       setState(() {
         _date = _pickeddate;
+      });
+    });
+  }
+
+  void _chooseTime() {
+    showTimePicker(context: context, initialTime: TimeOfDay.now())
+        .then((_pickedTime) {
+      if (_pickedTime == null) {
+        return;
+      }
+      setState(() {
+        _time = _pickedTime;
+
+        var label = (_time.hour > 12) ? 'P.M.' : 'A.M.';
+        _showtime = (_time.hour % 12).toString() +
+            ':' +
+            _time.minute.toString() +
+            label;
       });
     });
   }
@@ -63,6 +83,7 @@ class _AddTaskState extends State<AddTask> {
         description: _description,
         category: _type,
         date: _date,
+        time: Time(_time.hour, _time.minute),
         isUrgent: _isUrgent);
     //add to tasks
     try {
@@ -86,44 +107,45 @@ class _AddTaskState extends State<AddTask> {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
-        body: Container(
-      height: height,
-      width: width,
-      child: SingleChildScrollView(
+      body: SingleChildScrollView(
         child: Column(
           children: [
+            Material(
+              elevation: 10,
+              borderRadius:
+                  BorderRadius.only(bottomRight: Radius.circular(height * 0.4)),
+              child: Container(
+                  height: height * 0.15 + MediaQuery.of(context).padding.top,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                      color: Color(0xFF584890),
+                      borderRadius: BorderRadius.only(
+                          bottomRight: Radius.circular(height * 0.4))),
+                  child: Row(
+                    children: [
+                      IconButton(
+                          icon: Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                            size: 30,
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          }),
+                      SizedBox(
+                        width: width * 0.05,
+                      ),
+                      Text(
+                        'Add task',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 25),
+                      ),
+                    ],
+                  )),
+            ),
             Container(
-                height: height * 0.15 + MediaQuery.of(context).padding.top,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                    color: Color(0xFF584890),
-                    borderRadius: BorderRadius.only(
-                        bottomRight: Radius.circular(height * 0.4))),
-                child: Row(
-                  children: [
-                    IconButton(
-                        icon: Icon(
-                          Icons.arrow_back,
-                          color: Colors.white,
-                          size: 30,
-                        ),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        }),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    Text(
-                      'Add task',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 25),
-                    ),
-                  ],
-                )),
-            Container(
-              height: height * 0.85,
               width: double.infinity,
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Form(
@@ -171,69 +193,110 @@ class _AddTaskState extends State<AddTask> {
                         return null;
                       },
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Expanded(
-                          child: Text(
-                            _date == null
-                                ? 'No. Date chossen'
-                                : 'Picked Date : ${DateFormat.yMd().format(_date)}',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ),
-                        FlatButton(
-                          child: Text(
-                            'Choose Date',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).primaryColor),
-                          ),
-                          onPressed: _chooseDate,
-                        ),
-                      ],
+                    Container(
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                              color: Theme.of(context).primaryColor)),
+                      child: Text(
+                        'Select Task Deadline',
+                        style: TextStyle(
+                            fontSize: 15,
+                            color: Theme.of(context).primaryColor),
+                      ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Is the this task very urgent/important?',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        Switch(
-                          value: _isUrgent,
-                          onChanged: (value) {
-                            setState(() {
-                              _isUrgent = value;
-                            });
-                          },
-                        )
-                      ],
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 8),
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                              color: Theme.of(context).primaryColor)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Expanded(
+                            child: Text(
+                              _date == null
+                                  ? 'No. Date chosen'
+                                  : 'Picked Date : ${DateFormat.yMd().format(_date)}',
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          ),
+                          FlatButton(
+                            child: Text(
+                              'Choose Date',
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).primaryColor),
+                            ),
+                            onPressed: _chooseDate,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 8),
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                              color: Theme.of(context).primaryColor)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Expanded(
+                            child: Text(
+                              _time == null
+                                  ? 'No. Time chosen'
+                                  : 'Picked Time : ' + _showtime,
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          ),
+                          FlatButton(
+                            child: Text(
+                              'Choose Time',
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).primaryColor),
+                            ),
+                            onPressed: _chooseTime,
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: height * 0.02,
                     ),
                     SelectType(_selectType),
-                    Align(
-                      alignment: Alignment.center,
-                      child: SizedBox(
-                        height: height * 0.1,
-                        width: width * 0.5,
-                        child: RaisedButton.icon(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(40)),
-                            color: Theme.of(context).primaryColor,
-                            onPressed: () {
-                              _submit();
-                            },
-                            icon: Icon(
-                              Icons.book,
-                              color: Colors.white,
-                              size: 20,
-                            ),
-                            label: Text(
-                              'Sumbit',
-                              style:
-                                  TextStyle(fontSize: 15, color: Colors.white),
-                            )),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: SizedBox(
+                          height: height * 0.1,
+                          width: width * 0.5,
+                          child: RaisedButton.icon(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(40)),
+                              color: Theme.of(context).primaryColor,
+                              onPressed: () {
+                                _submit();
+                              },
+                              icon: Icon(
+                                Icons.book,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                              label: Text(
+                                'Sumbit',
+                                style: TextStyle(
+                                    fontSize: 20, color: Colors.white),
+                              )),
+                        ),
                       ),
                     )
                   ],
@@ -243,6 +306,6 @@ class _AddTaskState extends State<AddTask> {
           ],
         ),
       ),
-    ));
+    );
   }
 }

@@ -12,6 +12,7 @@ class TasType extends StatefulWidget {
 }
 
 class _TasTypeState extends State<TasType> {
+  final tag = 'herowidget';
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
@@ -23,8 +24,7 @@ class _TasTypeState extends State<TasType> {
       child: Container(
         height: height * 0.4,
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-                bottomRight: Radius.circular(40), topLeft: Radius.circular(40)),
+            borderRadius: BorderRadius.circular(30),
             gradient: LinearGradient(
                 colors: [widget.color.withOpacity(0.3), widget.color],
                 begin: Alignment.topLeft,

@@ -1,19 +1,32 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:to_do/DataBase/database.dart';
+
+class Time {
+  final int hour;
+  final int minute;
+  Time(this.hour, this.minute);
+  String toString() {
+    return this.hour.toString() + ',' + this.minute.toString();
+  }
+}
 
 class Task with ChangeNotifier {
-  final String id;
-  final String title;
-  final String description;
-  final String category;
+  final String id; //string TEXT
+  final String title; //string TEXT
+  final String description; //string TEXT
+  final String category; //string TEXT
   final DateTime date;
-  final bool isUrgent;
-  bool isDone;
+  final Time time; //string TEXT
+  final bool isUrgent; //intrget INT
+  bool isDone; //integer INT
   Task(
       {@required this.id,
       @required this.title,
       @required this.description,
       @required this.category,
       @required this.date,
+      @required this.time,
       @required this.isUrgent,
       this.isDone = false});
 
@@ -21,34 +34,23 @@ class Task with ChangeNotifier {
     isDone = !isDone;
     notifyListeners();
   }
+
+  Map<String, dynamic> toMap(Task t) {
+    return {
+      'id': t.id,
+      'title': t.title,
+      'description': t.description,
+      'category': t.category,
+      'date': t.date.toIso8601String(),
+      'time': t.time.toString(),
+      'isUrgent': (t.isUrgent) ? 1 : 0,
+      'isDone': (t.isDone) ? 1 : 0,
+    };
+  }
 }
 
 class TaskTodo with ChangeNotifier {
-  List<Task> _tasks = [
-    Task(
-        id: '!1',
-        title: 'Reading book',
-        description: '',
-        category: 'T2',
-        date: DateTime.now(),
-        isUrgent: true),
-    Task(
-        id: '!2',
-        title: 'Coding the app',
-        description:
-            'Completing the todo list app with the flutter to post to playstore',
-        category: 'T2',
-        date: DateTime.now(),
-        isUrgent: true),
-    Task(
-        id: '!3',
-        title: 'Merging to the github',
-        description:
-            'Checking the code of the fellow interns and the merging them to the main branch fnuvnlaawnefvshdfhawe',
-        category: 'T1',
-        date: DateTime.now(),
-        isUrgent: true)
-  ];
+  List<Task> _tasks = [];
 
   List<Task> get tasks {
     return [..._tasks];
@@ -66,13 +68,40 @@ class TaskTodo with ChangeNotifier {
     return _tasks.firstWhere((element) => element.id == id);
   }
 
+  Future<void> fetchTasks() async {
+    final fetchedData = await DataBase.fetch();
+    print(fetchedData);
+    try {
+      _tasks = fetchedData
+          .map((task) => Task(
+              id: task['id'],
+              title: task['title'],
+              description: task['description'],
+              category: task['category'],
+              date: DateTime.parse(task['date']),
+              time: Time(int.parse(task['time'].split(",")[0]),
+                  int.parse(task['time'].split(",")[1])),
+              isUrgent: task['isUrgent'] == 1,
+              isDone: task['isDone'] == 1))
+          .toList();
+    } catch (e) {
+      print(e.toString());
+    }
+
+    print('>>>>tasks');
+    print(_tasks);
+    notifyListeners();
+  }
+
   void deleteTask(String id) {
     _tasks.removeWhere((element) => element.id == id);
+    DataBase.delete(id);
     notifyListeners();
   }
 
   void addTask(Task t) {
     _tasks.add(t);
+    DataBase.insert(t);
     print('task Added');
     notifyListeners();
   }

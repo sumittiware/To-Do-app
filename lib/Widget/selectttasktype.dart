@@ -19,10 +19,18 @@ class _SelectTypeState extends State<SelectType> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Select task category : ',
-            style: TextStyle(fontSize: 16),
-            textAlign: TextAlign.end,
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 8),
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Theme.of(context).primaryColor)),
+            child: Text(
+              'Select task category : ',
+              style: TextStyle(
+                  fontSize: 17, color: Theme.of(context).primaryColor),
+              textAlign: TextAlign.end,
+            ),
           ),
           Stack(
             children: [
@@ -74,7 +82,7 @@ class _SelectTypeState extends State<SelectType> {
               title,
               style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 15,
+                  fontSize: 16,
                   color: Colors.white),
             ),
           ),
