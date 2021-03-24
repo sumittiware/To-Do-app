@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:to_do/Config/config.dart';
 import 'package:to_do/Models/task.dart';
-import 'package:to_do/Widget/TaskTypewidget.dart';
 import 'package:to_do/Widget/notask.dart';
-import 'package:to_do/main.dart';
 import '../Widget/task.dart';
 import '../Models/Tasktype.dart' as types;
 
@@ -30,7 +29,7 @@ class TaskPage extends StatelessWidget {
                     height: height * 0.15 + MediaQuery.of(context).padding.top,
                     width: double.infinity,
                     decoration: BoxDecoration(
-                        color: Color(0xFF584890),
+                        gradient: LinearGradient(colors: appbarGradient),
                         borderRadius: BorderRadius.only(
                             bottomRight: Radius.circular(height * 0.4))),
                     child: Row(

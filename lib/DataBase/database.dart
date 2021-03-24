@@ -8,7 +8,7 @@ class DataBase {
     return sql.openDatabase(path.join(dbpath, 'tasks.db'),
         onCreate: (db, version) {
       return db.execute(
-          'CREATE TABLE tasksManager(id TEXT PRIMARY KEY,title TEXT,description TEXT,category TEXT,date TEXT,time TEXT,isUrgent INTEGER,isDone INTEGER)');
+          'CREATE TABLE tasksManager(id INTEGER PRIMARY KEY,title TEXT,description TEXT,category TEXT,date TEXT,isDone INTEGER)');
     }, version: 1);
   }
 
@@ -16,18 +16,21 @@ class DataBase {
     final db = await DataBase.getDatabase();
     await db.insert('tasksManager', task.toMap(task),
         conflictAlgorithm: sql.ConflictAlgorithm.replace);
-    print('Transaction Data added');
   }
 
   static Future<List<Map<String, dynamic>>> fetch() async {
     final sqlDb = await DataBase.getDatabase();
-    print('fetched and ready to return data');
     return sqlDb.query('tasksManager');
   }
 
-  static Future<void> delete(String id) async {
+  static Future<void> delete(int id) async {
     final sqlDb = await DataBase.getDatabase();
     await sqlDb.delete('tasksManager', where: "id=?", whereArgs: [id]);
-    print('Item deleted from database');
+  }
+
+  static Future<void> update(int id, Task task) async {
+    final sqlDb = await DataBase.getDatabase();
+    await sqlDb.update('tasksManager', task.toMap(task),
+        where: "id=?", whereArgs: [id]);
   }
 }

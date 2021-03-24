@@ -1,24 +1,16 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:to_do/DataBase/database.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class Time {
-  final int hour;
-  final int minute;
-  Time(this.hour, this.minute);
-  String toString() {
-    return this.hour.toString() + ',' + this.minute.toString();
-  }
-}
+import '../main.dart';
 
 class Task with ChangeNotifier {
-  final String id; //string TEXT
+  final int id; //string INT
   final String title; //string TEXT
   final String description; //string TEXT
   final String category; //string TEXT
-  final DateTime date;
-  final Time time; //string TEXT
-  final bool isUrgent; //intrget INT
+  final DateTime date; //string TEXT
   bool isDone; //integer INT
   Task(
       {@required this.id,
@@ -26,13 +18,17 @@ class Task with ChangeNotifier {
       @required this.description,
       @required this.category,
       @required this.date,
-      @required this.time,
-      @required this.isUrgent,
       this.isDone = false});
 
-  void toggleDone() {
+  void toggleDone() async {
     isDone = !isDone;
     notifyListeners();
+    try {
+      await DataBase.update(this.id, this);
+    } catch (e) {
+      isDone = !isDone;
+      notifyListeners();
+    }
   }
 
   Map<String, dynamic> toMap(Task t) {
@@ -42,14 +38,24 @@ class Task with ChangeNotifier {
       'description': t.description,
       'category': t.category,
       'date': t.date.toIso8601String(),
-      'time': t.time.toString(),
-      'isUrgent': (t.isUrgent) ? 1 : 0,
       'isDone': (t.isDone) ? 1 : 0,
     };
   }
 }
 
 class TaskTodo with ChangeNotifier {
+  int taskNumber;
+
+  Future<void> fetchTaskNumber() async {
+    final prefs = await SharedPreferences.getInstance();
+    taskNumber = prefs.getInt('taskNumber');
+  }
+
+  Future<void> incrementTask() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setInt('taskNumber', taskNumber + 1);
+  }
+
   List<Task> _tasks = [];
 
   List<Task> get tasks {
@@ -60,17 +66,13 @@ class TaskTodo with ChangeNotifier {
     return _tasks.where((item) => item.category == type).toList();
   }
 
-  List<Task> urgents() {
-    return _tasks.where((item) => item.isUrgent == true).toList();
-  }
-
-  Task findById(String id) {
+  Task findById(int id) {
     return _tasks.firstWhere((element) => element.id == id);
   }
 
   Future<void> fetchTasks() async {
+    fetchTaskNumber();
     final fetchedData = await DataBase.fetch();
-    print(fetchedData);
     try {
       _tasks = fetchedData
           .map((task) => Task(
@@ -79,29 +81,25 @@ class TaskTodo with ChangeNotifier {
               description: task['description'],
               category: task['category'],
               date: DateTime.parse(task['date']),
-              time: Time(int.parse(task['time'].split(",")[0]),
-                  int.parse(task['time'].split(",")[1])),
-              isUrgent: task['isUrgent'] == 1,
               isDone: task['isDone'] == 1))
           .toList();
     } catch (e) {
-      print(e.toString());
+      throw (e);
     }
-
-    print('>>>>tasks');
-    print(_tasks);
     notifyListeners();
   }
 
-  void deleteTask(String id) {
+  void deleteTask(int id) async {
     _tasks.removeWhere((element) => element.id == id);
     DataBase.delete(id);
+    await flutterLocalNotificationsPlugin.cancel(id);
     notifyListeners();
   }
 
   void addTask(Task t) {
     _tasks.add(t);
     DataBase.insert(t);
+    incrementTask();
     print('task Added');
     notifyListeners();
   }

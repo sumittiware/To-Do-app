@@ -7,7 +7,7 @@ class SplashScreen extends StatelessWidget {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor.withOpacity(1),
+      backgroundColor: Color(0xFFF8D0A0),
       body: Container(
         height: height,
         width: width,
@@ -29,9 +29,9 @@ class SplashScreen extends StatelessWidget {
             Text(
               'Task Manager',
               style: TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white),
+                fontSize: 40,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             SizedBox(
               height: height * 0.2,

@@ -1,11 +1,12 @@
-import 'dart:async';
 import 'package:async/async.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
+import 'package:to_do/Config/config.dart';
 import 'package:to_do/Models/task.dart';
 import 'package:to_do/Screens/Addtask.dart';
-
 import 'package:to_do/Widget/TaskTypewidget.dart';
+import 'package:to_do/Widget/bottomsheet.dart';
 import '../Models/Tasktype.dart' as t;
 
 class Homepage extends StatefulWidget {
@@ -28,6 +29,14 @@ class _HomepageState extends State<Homepage> {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
 
+    void _moreMenu(BuildContext ctx) {
+      showModalBottomSheet(
+          context: ctx,
+          builder: (_) {
+            return MyBottomSheet();
+          });
+    }
+
     return Scaffold(
       body: Stack(
         children: [
@@ -46,40 +55,26 @@ class _HomepageState extends State<Homepage> {
                           height * 0.15 + MediaQuery.of(context).padding.top,
                       width: double.infinity,
                       decoration: BoxDecoration(
-                          color: Color(0xFF584890),
+                          gradient: LinearGradient(colors: appbarGradient),
                           borderRadius: BorderRadius.only(
                               bottomRight: Radius.circular(height * 0.4))),
                       child: Row(
                         children: [
-                          PopupMenuButton(
+                          IconButton(
                             icon: Icon(
                               Icons.menu,
                               color: Colors.white,
                               size: 30,
                             ),
-                            itemBuilder: (_) => [
-                              PopupMenuItem(
-                                child: Text('Share app'),
-                                value: '#2',
-                              ),
-                              PopupMenuItem(
-                                child: Text('About Us'),
-                                value: '#3',
-                              ),
-                              PopupMenuItem(
-                                child: Text('Rate us'),
-                                value: '#4',
-                              )
-                            ],
-                            onSelected: (value) {
-                              print('Something else');
+                            onPressed: () {
+                              _moreMenu(context);
                             },
                           ),
                           SizedBox(
                             width: width * 0.1,
                           ),
                           Text(
-                            'Task Master',
+                            'To-Do',
                             style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -97,20 +92,26 @@ class _HomepageState extends State<Homepage> {
                         return (snapshot.connectionState ==
                                 ConnectionState.waiting)
                             ? Center(child: CircularProgressIndicator())
-                            : GridView.builder(
-                                gridDelegate:
-                                    SliverGridDelegateWithMaxCrossAxisExtent(
-                                        maxCrossAxisExtent: width * 0.5,
-                                        mainAxisSpacing: 10,
-                                        childAspectRatio: 1 / 1.2,
-                                        crossAxisSpacing: 20),
-                                itemBuilder: (ctx, index) => TasType(
-                                    t.type[index].id,
-                                    t.type[index].title,
-                                    t.type[index].imagepath,
-                                    t.type[index].color),
-                                itemCount: t.type.length,
-                              );
+                            : (snapshot.hasError)
+                                ? Center(
+                                    child: Text('Something went wrong!!'),
+                                  )
+                                : GridView.builder(
+                                    scrollDirection: Axis.vertical,
+                                    shrinkWrap: true,
+                                    gridDelegate:
+                                        SliverGridDelegateWithMaxCrossAxisExtent(
+                                            maxCrossAxisExtent: width * 0.5,
+                                            mainAxisSpacing: 10,
+                                            childAspectRatio: 1 / 1.2,
+                                            crossAxisSpacing: 20),
+                                    itemBuilder: (ctx, index) => TasType(
+                                        t.type[index].id,
+                                        t.type[index].title,
+                                        t.type[index].imagepath,
+                                        t.type[index].color),
+                                    itemCount: t.type.length,
+                                  );
                       }),
                 ),
               ],
@@ -119,7 +120,7 @@ class _HomepageState extends State<Homepage> {
           Positioned(
             child: SizedBox(
               width: width * 0.5,
-              height: height * 0.1 + MediaQuery.of(context).padding.bottom,
+              height: height * 0.08 + MediaQuery.of(context).padding.bottom,
               child: RaisedButton.icon(
                 onPressed: () {
                   Navigator.of(context).pushNamed(AddTask.routename);
@@ -133,21 +134,20 @@ class _HomepageState extends State<Homepage> {
                   'Add Task',
                   style: TextStyle(fontSize: 20, color: Colors.white),
                 ),
-                color: Color(0xFF584890),
+                color: buttonColor,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(height * 0.1),
-                        bottomLeft: Radius.circular(height * 0.1))),
+                    borderRadius: BorderRadius.circular(height * 0.1)),
               ),
             ),
-            bottom: 5,
-            right: 0,
+            bottom: height * 0.03,
+            right: width * 0.03,
           ),
         ],
       ),
     );
   }
 
+  //function to make the futureBuilder to run only once after the app is launched
   _fetchData() async {
     return _memoizer.runOnce(() async {
       return await Provider.of<TaskTodo>(context).fetchTasks();
