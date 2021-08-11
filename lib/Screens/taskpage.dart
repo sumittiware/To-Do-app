@@ -21,51 +21,54 @@ class TaskPage extends StatelessWidget {
             height: height,
             width: width,
             child: Column(children: [
-              Material(
-                elevation: 10,
-                borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(height * 0.4)),
-                child: Container(
-                    height: height * 0.15 + MediaQuery.of(context).padding.top,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                        gradient: LinearGradient(colors: appbarGradient),
-                        borderRadius: BorderRadius.only(
-                            bottomRight: Radius.circular(height * 0.4))),
-                    child: Row(
-                      children: [
-                        IconButton(
-                            icon: Icon(
-                              Icons.arrow_back,
-                              color: Colors.white,
-                              size: 30,
-                            ),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            }),
-                        SizedBox(
-                          width: 20,
-                        ),
-                        Text(
-                          type.title,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 25),
-                        ),
-                      ],
-                    )),
+              Hero(
+                tag: typeId,
+                child: Material(
+                  elevation: 10,
+                  borderRadius: BorderRadius.only(
+                      bottomRight: Radius.circular(height * 0.4)),
+                  child: Container(
+                      height: height * 0.1 + MediaQuery.of(context).padding.top,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(colors: appbarGradient),
+                          borderRadius: BorderRadius.only(
+                              bottomRight: Radius.circular(height * 0.4))),
+                      child: Row(
+                        children: [
+                          IconButton(
+                              icon: Icon(
+                                Icons.arrow_back,
+                                color: Colors.white,
+                                size: 27,
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              }),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          Text(
+                            type.title,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 22),
+                          ),
+                        ],
+                      )),
+                ),
               ),
-              Container(
-                height: height * 0.8,
-                child: (items.length == 0)
-                    ? NoTask()
-                    : ListView.builder(
-                        itemBuilder: (ctx, index) =>
-                            TaskWidget(items[index].id),
-                        itemCount: items.length,
-                      ),
-              )
+              Expanded(
+                  child: (items.length == 0)
+                      ? NoTask()
+                      : SingleChildScrollView(
+                          child: Column(
+                            children: List.generate(items.length, (index) {
+                              return TaskWidget(items[index].id);
+                            }),
+                          ),
+                        ))
             ])));
   }
 }

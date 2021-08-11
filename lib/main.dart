@@ -34,8 +34,9 @@ class Tasks extends StatelessWidget {
       providers: [ChangeNotifierProvider.value(value: TaskTodo())],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'To-Do',
+        title: 'Task Manager',
         theme: ThemeData(
+          scaffoldBackgroundColor: Colors.white,
           accentColor: taskColor,
           primaryColor: taskColor,
         ),

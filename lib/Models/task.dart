@@ -92,7 +92,7 @@ class TaskTodo with ChangeNotifier {
   void deleteTask(int id) async {
     _tasks.removeWhere((element) => element.id == id);
     DataBase.delete(id);
-    await flutterLocalNotificationsPlugin.cancel(id);
+    await flutterLocalNotificationsPlugin.cancel(id); //to don't provide
     notifyListeners();
   }
 

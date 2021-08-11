@@ -20,15 +20,13 @@ class _SelectTypeState extends State<SelectType> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            margin: EdgeInsets.symmetric(vertical: 8),
-            padding: EdgeInsets.all(8),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Theme.of(context).primaryColor)),
+            padding: EdgeInsets.only(top: 8, left: 0, right: 0, bottom: 8),
             child: Text(
               'Select task category : ',
               style: TextStyle(
-                  fontSize: 17, color: Theme.of(context).primaryColor),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 17,
+                  color: Theme.of(context).primaryColor),
               textAlign: TextAlign.end,
             ),
           ),
@@ -36,19 +34,10 @@ class _SelectTypeState extends State<SelectType> {
             children: [
               Container(
                 child: Wrap(
-                  children: [
-                    buildCategoryContainer(
-                        t.type[0].id, t.type[0].title, t.type[0].color),
-                    buildCategoryContainer(
-                        t.type[1].id, t.type[1].title, t.type[1].color),
-                    buildCategoryContainer(
-                        t.type[2].id, t.type[2].title, t.type[2].color),
-                    buildCategoryContainer(
-                        t.type[3].id, t.type[3].title, t.type[3].color),
-                    buildCategoryContainer(
-                        t.type[4].id, t.type[4].title, t.type[4].color)
-                  ],
-                ),
+                    children: List.generate(
+                        t.type.length,
+                        (index) => buildCategoryContainer(t.type[index].id,
+                            t.type[index].title, t.type[index].color))),
               ),
             ],
           )
@@ -66,7 +55,7 @@ class _SelectTypeState extends State<SelectType> {
           if (_isSelected) {
             widget.selectType(id);
           } else {
-            widget.selectType('');
+            widget.selectType(_selectedId);
           }
         });
       },
@@ -74,16 +63,13 @@ class _SelectTypeState extends State<SelectType> {
         children: [
           Container(
             margin: EdgeInsets.all(5),
-            padding: EdgeInsets.all(20),
+            padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(40),
+                borderRadius: BorderRadius.circular(30),
                 color: color.withOpacity(0.7)),
             child: Text(
               title,
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: Colors.white),
+              style: TextStyle(fontSize: 16, color: Colors.white),
             ),
           ),
           if (_isSelected && _selectedId == id)

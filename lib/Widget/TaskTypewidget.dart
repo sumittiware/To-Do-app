@@ -12,42 +12,47 @@ class TasType extends StatefulWidget {
 }
 
 class _TasTypeState extends State<TasType> {
-  final tag = 'herowidget';
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
-    return InkWell(
-      onTap: () {
-        Navigator.of(context)
-            .pushNamed(TaskPage.routename, arguments: widget.id);
-      },
-      child: Container(
-        height: height * 0.4,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30),
-            gradient: LinearGradient(
-                colors: [widget.color.withOpacity(0.3), widget.color],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight)),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              height: 100,
-              width: 100,
-              child: Image.asset(
-                widget.imagepath,
-                fit: BoxFit.cover,
-              ),
+    return Hero(
+      tag: widget.id,
+      child: Material(
+        child: Container(
+          height: height * 0.4,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30),
+              gradient: LinearGradient(
+                  colors: [widget.color.withOpacity(0.3), widget.color],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight)),
+          child: InkWell(
+            onTap: () {
+              Navigator.of(context)
+                  .pushNamed(TaskPage.routename, arguments: widget.id);
+            },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  widget.imagepath,
+                  fit: BoxFit.cover,
+                  height: 100,
+                  width: 100,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  widget.title,
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                )
+              ],
             ),
-            Text(
-              widget.title,
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold),
-            )
-          ],
+          ),
         ),
       ),
     );

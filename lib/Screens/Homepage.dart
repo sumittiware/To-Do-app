@@ -6,11 +6,13 @@ import 'package:to_do/Config/config.dart';
 import 'package:to_do/Models/task.dart';
 import 'package:to_do/Screens/Addtask.dart';
 import 'package:to_do/Widget/TaskTypewidget.dart';
-import 'package:to_do/Widget/bottomsheet.dart';
+import 'package:to_do/Widget/appbar.dart';
+
 import '../Models/Tasktype.dart' as t;
 
 class Homepage extends StatefulWidget {
   static const routename = '/homepage';
+
   @override
   _HomepageState createState() => _HomepageState();
 }
@@ -28,99 +30,50 @@ class _HomepageState extends State<Homepage> {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
-
-    void _moreMenu(BuildContext ctx) {
-      showModalBottomSheet(
-          context: ctx,
-          builder: (_) {
-            return MyBottomSheet();
-          });
-    }
-
     return Scaffold(
       body: Stack(
         children: [
           Container(
-            height: height,
-            width: width,
-            child: Column(
-              children: [
-                Material(
-                  elevation: 10,
-                  borderRadius: BorderRadius.only(
-                      bottomRight: Radius.circular(height * 0.4)),
-                  child: Container(
-                      padding: EdgeInsets.all(20),
-                      height:
-                          height * 0.15 + MediaQuery.of(context).padding.top,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(colors: appbarGradient),
-                          borderRadius: BorderRadius.only(
-                              bottomRight: Radius.circular(height * 0.4))),
-                      child: Row(
-                        children: [
-                          IconButton(
-                            icon: Icon(
-                              Icons.menu,
-                              color: Colors.white,
-                              size: 30,
-                            ),
-                            onPressed: () {
-                              _moreMenu(context);
-                            },
-                          ),
-                          SizedBox(
-                            width: width * 0.1,
-                          ),
-                          Text(
-                            'To-Do',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 25),
-                          ),
-                        ],
-                      )),
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  height: height * 0.8,
-                  child: FutureBuilder(
-                      future: _fetchData(),
-                      builder: (ctx, snapshot) {
-                        return (snapshot.connectionState ==
-                                ConnectionState.waiting)
-                            ? Center(child: CircularProgressIndicator())
-                            : (snapshot.hasError)
-                                ? Center(
-                                    child: Text('Something went wrong!!'),
-                                  )
-                                : GridView.builder(
-                                    scrollDirection: Axis.vertical,
-                                    shrinkWrap: true,
-                                    gridDelegate:
-                                        SliverGridDelegateWithMaxCrossAxisExtent(
-                                            maxCrossAxisExtent: width * 0.5,
-                                            mainAxisSpacing: 10,
-                                            childAspectRatio: 1 / 1.2,
-                                            crossAxisSpacing: 20),
-                                    itemBuilder: (ctx, index) => TasType(
+              height: height,
+              width: width,
+              child: Container(
+                padding: EdgeInsets.fromLTRB(
+                    20, 100 + MediaQuery.of(context).padding.top, 20, 0),
+                height: height,
+                child: FutureBuilder(
+                    future: _fetchData(),
+                    builder: (ctx, snapshot) {
+                      return (snapshot.connectionState ==
+                              ConnectionState.waiting)
+                          ? Center(child: CircularProgressIndicator())
+                          : (snapshot.hasError)
+                              ? Center(
+                                  child: Text('Something went wrong!!'),
+                                )
+                              : GridView(
+                                  physics: BouncingScrollPhysics(),
+                                  gridDelegate:
+                                      SliverGridDelegateWithMaxCrossAxisExtent(
+                                          maxCrossAxisExtent: width * 0.5,
+                                          mainAxisSpacing: 10,
+                                          childAspectRatio: 1 / 1.2,
+                                          crossAxisSpacing: 20),
+                                  children: List.generate(
+                                    t.type.length,
+                                    (index) => TasType(
                                         t.type[index].id,
                                         t.type[index].title,
                                         t.type[index].imagepath,
                                         t.type[index].color),
-                                    itemCount: t.type.length,
-                                  );
-                      }),
-                ),
-              ],
-            ),
-          ),
+                                  ),
+                                );
+                    }),
+              )),
+          Positioned(top: 0, child: CustomAppBar()),
           Positioned(
             child: SizedBox(
-              width: width * 0.5,
-              height: height * 0.08 + MediaQuery.of(context).padding.bottom,
+              width: width * 0.4,
+              height: 60,
               child: RaisedButton.icon(
                 onPressed: () {
                   Navigator.of(context).pushNamed(AddTask.routename);
@@ -132,11 +85,11 @@ class _HomepageState extends State<Homepage> {
                 ),
                 label: Text(
                   'Add Task',
-                  style: TextStyle(fontSize: 20, color: Colors.white),
+                  style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
                 color: buttonColor,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(height * 0.1)),
+                    borderRadius: BorderRadius.circular(30)),
               ),
             ),
             bottom: height * 0.03,

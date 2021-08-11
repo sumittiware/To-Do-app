@@ -1,4 +1,3 @@
-import 'package:circular_check_box/circular_check_box.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
@@ -17,7 +16,6 @@ class _TaskWidgetState extends State<TaskWidget>
     with SingleTickerProviderStateMixin {
   bool _expanded = false;
   AnimationController _controller;
- 
 
   @override
   Widget build(BuildContext context) {
@@ -31,37 +29,40 @@ class _TaskWidgetState extends State<TaskWidget>
       return showDialog(
           context: context,
           barrierDismissible: false,
-          child: AlertDialog(
-            title: Text('Are you Sure?'),
-            content: Text('Does the task is completed?'),
-            actions: [
-              FlatButton(
-                  color: Theme.of(context).primaryColor,
-                  onPressed: () {
-                    task.toggleDone();
-                    setState(() {
-                      if (_expanded) _expanded = false;
-                    });
-                    Navigator.pop(context);
-                  },
-                  child: Text('Yes')),
-              FlatButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text(
-                    'No',
-                    style: TextStyle(color: taskColor),
-                  ))
-            ],
-          ));
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Are you Sure?'),
+              content: Text('Does the task is completed?'),
+              actions: [
+                FlatButton(
+                    color: Theme.of(context).primaryColor,
+                    onPressed: () {
+                      task.toggleDone();
+                      setState(() {
+                        if (_expanded) _expanded = false;
+                      });
+                      Navigator.pop(context);
+                    },
+                    child: Text('Yes')),
+                FlatButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      'No',
+                      style: TextStyle(color: taskColor),
+                    ))
+              ],
+            );
+          });
     }
 
     void deleteTask() async {
       return showDialog(
-          context: context,
-          barrierDismissible: false,
-          child: AlertDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertDialog(
             title: Text('Are you Sure?'),
             content: Text('Do you really want to delete the task?'),
             actions: [
@@ -91,7 +92,9 @@ class _TaskWidgetState extends State<TaskWidget>
                     style: TextStyle(color: taskColor),
                   ))
             ],
-          ));
+          );
+        },
+      );
     }
 
     return Padding(
@@ -107,7 +110,7 @@ class _TaskWidgetState extends State<TaskWidget>
         child: AnimatedContainer(
             duration: Duration(milliseconds: 300),
             curve: Curves.fastOutSlowIn,
-            height: _expanded ? 150 : 70,
+            height: _expanded ? 170 : 70,
             child: Container(
               padding: EdgeInsets.all(10),
               width: double.infinity,
@@ -128,10 +131,10 @@ class _TaskWidgetState extends State<TaskWidget>
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       if (!task.isDone)
-                        CircularCheckBox(
+                        Checkbox(
                             activeColor: buttonColor,
                             value: task.isDone,
-                            onChanged: (value) {
+                            onChanged: (_) {
                               taskDone();
                             }),
                       Container(
@@ -139,7 +142,7 @@ class _TaskWidgetState extends State<TaskWidget>
                         child: Text(
                           task.title,
                           style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 18,
                               color: (task.isDone) ? Colors.red : Colors.black,
                               decoration: (task.isDone)
                                   ? TextDecoration.lineThrough
@@ -189,17 +192,12 @@ class _TaskWidgetState extends State<TaskWidget>
                           Text(
                             'Date : ${DateFormat.yMMMEd().format(task.date)}',
                             style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            'Description : ',
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
+                                fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                           if (task.description.length != 0)
                             Text(
                               task.description,
-                              style: TextStyle(fontSize: 17),
+                              style: TextStyle(fontSize: 14),
                             )
                         ],
                       ),
