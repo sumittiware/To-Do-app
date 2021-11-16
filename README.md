@@ -4,9 +4,7 @@
 <br>-> Used sqlite database (SQL database in flutter) to store the data locally in the app
 <br>-> Flutter Local Notification, that will notify you in the scheduled day.
 
-Screenshots
-
-## Getting Started
+## Screenshots
 <br>
 <img src="screenshots/homepage.jpg" height = 700/>
 <img src="screenshots/addtask.jpg" height = 700/>
